@@ -1,0 +1,146 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="font-awesome-4.4.0/css/font-awesome.min.css">
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+
+    <script type='text/javascript' src='jquery-1.11.3.min.js'></script>
+    <script src="highcharts.js"></script>
+
+    <script type="text/javascript" src="global.js"></script>
+    <script type="text/javascript" src="canvas.js"></script>
+    <script type="text/javascript" src="particles.js"></script>
+    <script type="text/javascript" src="microcosm.js"></script>
+
+    <style>
+        * { margin:0; padding:0; } /* to remove the top and left whitespace */
+
+        html, body { width:100%; height:100%;} /* just to be sure these are full screen*/
+
+        canvas { display:block; background-color: black; margin: 0 auto;} /* To remove the scrollbars */
+
+        .hc-container {
+            margin: 0 auto;
+            margin: 0 auto;
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+            height: 400px;
+            right: 0;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0);
+            /*display:none;*/
+        }
+
+        .buttons {
+            position: fixed;
+            z-index: 1000;
+            right: 10;
+            top: 10;
+            width: 20px;
+            height: 20px;
+        }
+        #hc-hide {
+            right: 10;
+        }
+        #hc-pause {
+            right: 40;
+        }
+        #hc-play {
+            right: 70;
+        }
+        #hc-draw {
+            right: 100;
+        }
+    </style>
+
+    <button class="buttons" id="hc-hide"><span class="fa fa-bars"></span></button>
+    <button class="buttons" id="hc-pause"><span class="fa fa-pause"></span></button>
+    <button class="buttons" id="hc-play"><span class="fa fa-play"></span></button>
+    <button class="buttons" id="hc-draw"><span class="fa fa-paint-brush"></span></button>
+    <div id="container" class="hc-container"></div>
+
+<script>
+    var show = true;
+    $(function () {
+        $('#hc-hide').click(function (e) {
+            if(show) {
+                $('#container').hide();
+                show = false;
+            } else {
+                $('#container').show();
+                show = true;
+            }
+        });
+        $('#hc-pause').click(function (e) {
+            running = false;
+        });
+        $('#hc-play').click(function (e) {
+            running = true;
+            loop();
+        });
+        $('#hc-draw').click(function (e) {
+            allow_draw = !allow_draw;
+        });
+    });
+
+    $(function () {
+        chart = new Highcharts.Chart({
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:,.1f} %</b><br/>',
+                positioner: function (labelWidth, labelHeight, point) {
+                    return { x: point.plotX + labelWidth / 2, y: 0 };
+                }
+            },
+            chart: {
+                animation: false,
+                renderTo: 'container',
+                defaultSeriesType: 'spline',
+                backgroundColor:'rgba(255, 255, 255, 0.3)'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                tickPixelInterval: 150,
+                crosshair: true,
+                min:0
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'Value',
+                    margin: 80
+                },
+                min: 0,
+                //max: 100,
+                labels: {
+                    format: "{value:,.1f} %"
+                }
+            },
+            series: [{
+                name: get_color(0),
+                color: get_color(0),
+                data: []
+            },{
+                name: get_color(1),
+                color: get_color(1),
+                data: []
+            },{
+                name: get_color(2),
+                color: get_color(2),
+                data: []
+            }]
+        });
+        console.log(chart);
+    });
+</script>
+</body>
+
+</html>
