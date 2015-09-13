@@ -35,7 +35,8 @@ function update() {
             var pnew = p;
             p = {};
 
-            pnew.update();
+            if(use_kdtree) pnew.update_kdtree();
+            else pnew.update();
 
             particles_new[pnew.type].push(pnew);
         });
@@ -65,7 +66,7 @@ function draw() {
         $.each(particles, function(_, pt) {
             $.each(pt, function(_, p) {
                 ctx.fillStyle=get_color(p.type);
-                ctx.fillRect(p.position.x - SZPARTICLE/2.0,p.position.y - SZPARTICLE/2.0, SZPARTICLE, SZPARTICLE);
+                ctx.fillRect(p.x - SZPARTICLE/2.0,p.y - SZPARTICLE/2.0, SZPARTICLE, SZPARTICLE);
                 ctx.fill();
             });
         });

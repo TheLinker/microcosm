@@ -8,6 +8,9 @@ var running = true;
 var allow_draw = true;
 var chart;
 
+var use_kdtree = false, tree, tree_last_type;
+
+
 function get_color(val) {
     switch(val) {
         case 0:
@@ -30,4 +33,10 @@ function requestData() {
 
         t += 1;
     }
+}
+
+function distance(a, b) {
+    var dx = a.x-b.x;
+    var dy = a.y-b.y;
+    return Math.sqrt(dx*dx + dy*dy);
 }
