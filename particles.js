@@ -48,7 +48,7 @@ Particle.prototype.update_kdtree = function () {
     if(asd.length !== 0) {
         var dist = asd[0][1];
         var p = asd[0][0];
-        if(dist < VISIBILITY && dist < min_dist) {
+        if(dist < (VISIBILITY*VISIBILITY) && dist < min_dist) {
             //When any red(0) agent detects a green(1) agent, it gets contagious and turns green(1). 
             //When any green(1) agent detects a blue(2) agent, it gets blue(2). 
             //And when any blue(2) agent detects a red(0) agent, it gets red(0)
@@ -75,6 +75,8 @@ Particle.prototype.update = function () {
         var p = check_list[i];
         if(check_list[i] === this) continue;
 
+        if(p.x - this.x > 10 || this.x - p.x > 10 ) continue;
+        if(p.y - this.y > 10 || this.y - p.y > 10 ) continue;
         var dist = this.distanceTo(p);
         if(dist < VISIBILITY && dist < min_dist) {
             //When any red(0) agent detects a green(1) agent, it gets contagious and turns green(1). 

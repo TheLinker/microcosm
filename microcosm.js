@@ -54,7 +54,7 @@ function update() {
     ms_this_frame = this_frame_at - (last_frame_at || 0);
     last_frame_at = this_frame_at;
 
-    requestData();
+    //requestData();
 }
 
 function draw() {
