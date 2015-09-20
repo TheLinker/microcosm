@@ -68,6 +68,7 @@ Particle.prototype.update_kdtree = function () {
 
 Particle.prototype.update = function () {
     var min_dist = c.width;
+    var my_newtype = this.type;
 
     check_list = particles[(this.type + 1) % 3];
 
@@ -85,14 +86,14 @@ Particle.prototype.update = function () {
 
             min_dist = dist;
             if(this.type === 0 && p.type === 1)
-                this.type = 1;
+                my_newtype = 1;
             if(this.type === 1 && p.type === 2)
-                this.type = 2;
+                my_newtype = 2;
             if(this.type === 2 && p.type === 0)
-                this.type = 0;
+                my_newtype = 0;
         }
     }
-
+    this.type = my_newtype;
     this.move();
 }
 
@@ -104,22 +105,29 @@ Particle.prototype.move = function () {
     this.x += this.velocity.x;
     this.y += this.velocity.y;
 
-    if (this.x <= 0) {
-        this.x = -(this.x);
-        this.velocity.x *= -1;
-    }
-    if (this.x >= c.width) {
-        this.x = c.width - (this.x - c.width);
-        this.velocity.x *= -1;
-    }
+    if(behaviour === 'wrap') {
+        if (this.x <= 0)        this.x = c.width + this.x;
+        if (this.x >= c.width)  this.x = (this.x - c.width);
+        if (this.y <= 0)        this.y = c.height + this.y;
+        if (this.y >= c.height) this.y = (this.y - c.height);
+    } else if(behaviour === 'bounce') {
+        if (this.x <= 0) {
+            this.x = -(this.x);
+            this.velocity.x *= -1;
+        }
+        if (this.x >= c.width) {
+            this.x = c.width - (this.x - c.width);
+            this.velocity.x *= -1;
+        }
 
-    if (this.y <= 0) {
-        this.y = -(this.y);
-        this.velocity.y *= -1;
-    }
-    if (this.y >= c.height) {
-        this.y = c.height - (this.y - c.height);
-        this.velocity.y *= -1;
+        if (this.y <= 0) {
+            this.y = -(this.y);
+            this.velocity.y *= -1;
+        }
+        if (this.y >= c.height) {
+            this.y = c.height - (this.y - c.height);
+            this.velocity.y *= -1;
+        }
     }
 };
 

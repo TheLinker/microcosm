@@ -54,7 +54,7 @@ function update() {
     ms_this_frame = this_frame_at - (last_frame_at || 0);
     last_frame_at = this_frame_at;
 
-    //requestData();
+    requestData();
 }
 
 function draw() {
@@ -71,8 +71,8 @@ function draw() {
             });
         });
 
-    ctx.fillStyle = 'white';
-    ctx.fillText("FPS : " + (1000/(ms_this_frame||1)).toFixed(1), 10, 10, 80);
+    ($('#info-panel')[0] || {}).innerHTML = "FPS : " + (1000/(ms_this_frame||1)).toFixed(1);
+    ($('#info-panel')[0] || {}).innerHTML += "<br/>Un-sync Data : " + chart_data.length;
 }
 
 function loop() {

@@ -9,6 +9,7 @@
 
     <script type='text/javascript' src='jquery-1.11.3.min.js'></script>
     <script src="highcharts.js"></script>
+    <script src="http://rawgit.com/highslide-software/highcharts.com/master/js/modules/boost.src.js"></script>
 
     <script type="text/javascript" src="kd-tree-javascript/kdTree.js"></script>
 
@@ -34,59 +35,105 @@
             right: 0;
             z-index: 1000;
             background-color: rgba(0, 0, 0, 0);
-            /*display:none;*/
+            display:none;
         }
 
-        .buttons {
+        #info-panel {
             position: fixed;
-            z-index: 1000;
+            left: 10;
+            top: 10;
+            background-color: rgba(0,0,0,0.7);
+            color: rgb(200,200,200);
+            padding: 10px;
+        }
+
+        .panel {
+            position: fixed;
             right: 10;
             top: 10;
-            width: 20px;
-            height: 20px;
+            background-color: rgba(0,0,0,0.7);
+            padding: 10px;
         }
-        #hc-hide {
-            right: 10;
+
+        .input {
+            margin: 2px;
         }
-        #hc-pause {
-            right: 40;
+
+        .label {
+            color: rgb(200,200,200);
+            display:block;
         }
-        #hc-play {
-            right: 70;
+
+        .label.label-radio {
+            display:inline;
         }
-        #hc-draw {
-            right: 100;
+
+        .text-input {
+            width:100%;
+            display:block;
+        }
+
+        .button {
+            display: inline;
+            margin: 2px;
         }
     </style>
+    <div class="panel">
+        <button class="input button" id="hc-draw"><span class="fa fa-paint-brush"></span></button>
+        <button class="input button" id="hc-play"><span class="fa fa-play"></span></button>
+        <button class="input button" id="hc-pause"><span class="fa fa-pause"></span></button>
+        <button class="input button" id="hc-hide"><span class="fa fa-bars"></span></button>
+        <label class="label" for="NPARTICLES">Particles: </label><input type="numeric" class="input text-input" id="NPARTICLES" value="1000"></input>
+        <label class="label" for="SZPARTICLE">Particle Size: </label><input type="numeric" class="input text-input" id="SZPARTICLE" value="10"></input>
+        <label class="label" for="VISIBILITY">Visibility: </label><input type="numeric" class="input text-input" id="VISIBILITY" value="10"></input>
+        <label class="label">Border Behavior: </label>
+        <label class="label label-radio" for="wrap">Wrap</label>
+        <input type="radio" name="behaviour" class="input" id="wrap" value="wrap" value="10" checked="checked"></input>
+        <input type="radio" name="behaviour" class="input" id="bounce" value="bounce" value="10"></input>
+        <label class="label label-radio" for="bounce">Bounce</label>
+    </div>
+    <div id="info-panel"></div>
 
-    <button class="buttons" id="hc-hide"><span class="fa fa-bars"></span></button>
-    <button class="buttons" id="hc-pause"><span class="fa fa-pause"></span></button>
-    <button class="buttons" id="hc-play"><span class="fa fa-play"></span></button>
-    <button class="buttons" id="hc-draw"><span class="fa fa-paint-brush"></span></button>
     <div id="container" class="hc-container"></div>
 
 <script>
-    var show = true;
     $(function () {
         $('#hc-hide').click(function (e) {
-            if(show) {
+            if(show_hc) {
                 $('#container').hide();
-                show = false;
+                show_hc = false;
             } else {
                 $('#container').show();
-                show = true;
+                show_hc = true;
             }
         });
         $('#hc-pause').click(function (e) {
-            running = false;
+            if(running) running = false;
         });
         $('#hc-play').click(function (e) {
-            running = true;
-            loop();
+            if(!running) {
+                running = true;
+                loop();
+            }
         });
         $('#hc-draw').click(function (e) {
             allow_draw = !allow_draw;
         });
+        $('#NPARTICLES').change(function (e) {
+            NPARTICLES = $('#NPARTICLES').val();
+            $.each(chart.series, function(_, s) { s.setData([]); });
+            init_paticles();
+            t=0;
+        });
+        $('#SZPARTICLE').change(function (e) {
+            SZPARTICLE = $('#SZPARTICLE').val();
+        });
+        $('#VISIBILITY').change(function (e) {
+            VISIBILITY = $('#VISIBILITY').val();
+        });
+        $('input[name="behaviour"]').change(function (e) {
+            behaviour = this.value;
+        })
     });
 
     $(function () {
@@ -111,7 +158,7 @@
             xAxis: {
                 tickPixelInterval: 150,
                 crosshair: true,
-                min:0
+                //min:0
             },
             yAxis: {
                 minPadding: 0.2,
@@ -129,15 +176,24 @@
             series: [{
                 name: get_color(0),
                 color: get_color(0),
-                data: []
+                data: [],
+                marker: {
+                    enabled: false
+                }
             },{
                 name: get_color(1),
                 color: get_color(1),
-                data: []
+                data: [],
+                marker: {
+                    enabled: false
+                }
             },{
                 name: get_color(2),
                 color: get_color(2),
-                data: []
+                data: [],
+                marker: {
+                    enabled: false
+                }
             }]
         });
         console.log(chart);
